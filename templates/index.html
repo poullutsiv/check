@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-auto">
+      <div class="code-fild">
+        <form id='code-form' name="code_form" action="/checked_code" method="POST" role="form">
+          <div class="span12">
+            <h3>Just paste your code here</h3>
+            <label for="code">
+              <input type="hidden" id="code" name="code" value="">
+            </label>
+            <pre id="editor" style="padding: 0px;"></pre>
+            <h2>Chose libs</h2>
+            <form action="javascript:void(0)">
+              <div class="checkbox">
+                <label><input type="checkbox" name='Flake8' id="Flake8">Flake8</label>
+              </div>
+              <div id="conditional_part-flake" style="display: none;">
+                <input type="text" name="flake-config" id='flake-config' placeholder="Input your line length">
+                <input type="text" name="flake-ignore" id='flake-ignore' placeholder="Input errors wich you want to ignore">
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" name='MyPy' id="MyPy">MyPy</label>
+              </div>
+              <div id="conditional_part-mypy" style="display: none;">
+                <div style="margin-left:25px;">
+                    <div><label><input  title=" disallows usage of types that come from unfollowed imports" type="checkbox" name='MyPy1' id="MyPy1" " >disallow-any-unimported</label>
+                    </div>
+                    <div><label><input type="checkbox" title=" reports an error whenever a function with type annotations calls a function defined without annotations" name='MyPy2' id="MyPy2">disallow-untyped-calls</label></div>
+                    <div><label><input type="checkbox" title=" will generate errors when a function is missing return statements in some execution paths" name='MyPy3' id="MyPy3">no-warn-no-return</label></div>
+                    <div><label><input type="checkbox" title=" causes mypy to stop treating arguments with a default value as having an implicit type" name='MyPy4' id="MyPy4">no-implicit-optional</label></div>
+                    <div><label><input type="checkbox" title="will make mypy report an error whenever your code uses a comment on a line that is not actually generating an error message" name='MyPy5' id="MyPy5">warn-unused-ignores</label></div>
+                    <div><label><input type="checkbox" title="will make mypy report an error whenever your code uses an unnecessary cast that can safely be removed" name='MyPy6' id="MyPy6">warn-redundant-casts</label></div>
+                </div>
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" name='PyDocStyle' id="PyDocStyle">PyDocStyle</label>
+              </div>
+              <div id="conditional_part-pydocstyle" style="display: none;">
+                <input type="text" name="pydocstyle-ignore" id='pydocstyle-ignore' placeholder="Input errors wich you want to ignore">
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" name="Coverage" id="Coverage">Coverage</label>
+              </div>
+              <div id="conditional_part-coverage" style="display: none;">
+                <input type="text" name="" value="" placeholder="Input your line length">
+              </div>
+            </form>
+
+        <button id='btn_code' type="button" onclick="codeSubmit()">Check code</button>
+      </div>
+      </form>
+      <script src="/static/ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+
+      <script>
+        var editor = ace.edit("editor");
+        var textarea = document.getElementById('code');
+        editor.setTheme("ace/theme/terminal");
+        editor.getSession().setMode("ace/mode/python");
+        var codeSubmit = function() {
+          textarea.value = editor.getSession().getValue();
+          document.forms['code_form'].submit();
+
+        }
+        $('#Flake8').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-flake").hide();
+          } else {
+            $("#conditional_part-flake").show();
+          }
+        });
+
+        $('#MyPy').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-mypy").hide();
+          } else {
+            $("#conditional_part-mypy").show();
+          }
+        });
+        $('#PyDocStyle').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-pydocstyle").hide();
+          } else {
+            $("#conditional_part-pydocstyle").show();
+          }
+        });
+        $('#Coverage').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-coverage").hide();
+          } else {
+            $("#conditional_part-coverage").show();
+          }
+        });
+
+        function myFunction() {
+  var checkBox = document.getElementById("MyPy1");
+  var text = document.getElementById("text");
+  if (checkBox.checked == true){
+    text.style.display = "block";
+  } else {
+     text.style.display = "none";
+  }
+}
+      </script>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+
+</html>

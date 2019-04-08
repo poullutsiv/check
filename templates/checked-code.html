@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-auto">
+      <div class="code-fild">
+        <form id='code-form' name="code_form" action="/checked_code" method="POST" role="form">
+          <div class="span12">
+            <h3>Your code</h3>
+            <label for="code">
+              <input type="hidden" id="code" name="code" value="{{ code_text }}">
+            </label>
+            <pre id="editor" style="padding: 0px;">{{ code_text }}</pre>
+            <h2>Chose libs</h2>
+
+            <form action="javascript:void(0)">
+              <div class="checkbox">
+                <label><input type="checkbox" name='Flake8' id="Flake8">Flake8</label>
+              </div>
+              <div id="conditional_part-flake" style="display: none;">
+                <input type="text" name="flake-config" id='flake-config' placeholder="Input your line length">
+                <input type="text" name="flake-ignore" id='flake-ignore' placeholder="Input errors wich you want to ignore">
+              </div>
+
+              <div class="checkbox">
+                <label><input type="checkbox" name='MyPy' id="MyPy">MyPy</label>
+              </div>
+              <div id="conditional_part-mypy" style="display: none;">
+                <div style="margin-left:25px;">
+                    <div><label><input type="checkbox" name='MyPy1' id="MyPy1">disallow-any-unimported</label></div>
+                    <div><label><input type="checkbox" name='MyPy2' id="MyPy2">disallow-untyped-calls</label></div>
+                    <div><label><input type="checkbox" name='MyPy3' id="MyPy3">no-warn-no-return</label></div>
+                    <div><label><input type="checkbox" name='MyPy4' id="MyPy4">no-implicit-optional</label></div>
+                    <div><label><input type="checkbox" name='MyPy5' id="MyPy5">warn-unused-ignores</label></div>
+                    <div><label><input type="checkbox" name='MyPy6' id="MyPy6">warn-redundant-casts</label></div>
+                </div>
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" name='PyDocStyle' id="PyDocStyle">PyDocStyle</label>
+              </div>
+              <div id="conditional_part-pydocstyle" style="display: none;">
+                <input type="text" name="pydocstyle-ignore" id='pydocstyle-ignore' placeholder="Input errors wich you want to ignore">
+              </div>
+              <div class="checkbox">
+                <label><input type="checkbox" name="Coverage" id="Coverage">Coverage</label>
+              </div>
+              <div id="conditional_part-coverage" style="display: none;">
+                <input type="text" name="" value="" placeholder="Input your line length">
+              </div>
+            </form>
+            <button id='btn_code' type="button" onclick="codeSubmit()">Check code</button>
+          </div>
+        </form>
+        </form>
+
+        </form>
+      </div>
+
+      <script src="/static/ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+      <script>
+        var editor = ace.edit("editor");
+        var textarea = document.getElementById('code');
+        textarea.value = editor.getSession().getValue();
+        editor.setTheme("ace/theme/terminal");
+        editor.getSession().setMode("ace/mode/python");
+        editor.setHighlightActiveLine(true);
+        editor.getSession().on('change', function() {
+          textarea.value = editor.getSession().getValue();
+        });
+        editor.gotoLine(1);
+
+
+        var codeSubmit = function() {
+          textarea.value = editor.getSession().getValue();
+          document.forms['code_form'].submit();
+
+        }
+
+        $('#Flake8').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-flake").hide();
+          } else {
+            $("#conditional_part-flake").show();
+          }
+        });
+
+        $('#MyPy').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-mypy").hide();
+          } else {
+            $("#conditional_part-mypy").show();
+          }
+        });
+        $('#PyDocStyle').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-pydocstyle").hide();
+          } else {
+            $("#conditional_part-pydocstyle").show();
+          }
+        });
+        $('#Coverage').change(function() {
+          if (this.checked != true) {
+            $("#conditional_part-coverage").hide();
+          } else {
+            $("#conditional_part-coverage").show();
+          }
+        });
+      </script>
+    </div>
+  </div>
+</div>
+<div class="pages-fluid ">
+  <ul class="nav nav-pills justify-content-center align-items-center">
+    <li class="active"><a href="#">-PyDocStyle-</a></li>
+    <li><a href="#">-Flake8-</a></li>
+    <li><a href="#">-MyPy-</a></li>
+    <li><a href="#">-Coverage-</a></li>
+  </ul>
+</div>
+<div class="container">
+  {% for key, value in res.items() %}
+  {% if key=='Flake8' %}
+  <h2>Flake8</h2>
+  <table class="table" id="result_table_flake">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Row</th>
+        <th scope="col">Column</th>
+        <th scope="col">Info</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in value %}
+      <tr class="tr-result">
+        <th scope="row">{{res.n}}</th>
+        <td>
+          {{res.row}}
+        </td>
+        <td>
+          {{res.col}}
+        </td>
+        <td>
+          {{res.msg}}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% if key=='MyPy' %}
+  <h2>MyPy</h2>
+  <table class="table" id="result_table_mypy">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Row</th>
+        <th scope="col">Info</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in value %}
+      <tr class="tr-result">
+        <th scope="row">{{res.n}}</th>
+        <td>
+          {{res.row}}
+        </td>
+        <td>
+          {{res.msg}}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% if key=='PyDocStyle' %}
+  <h2> PyDocStyle</h2>
+  <table class="table" id="result_table_pydocstyle">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Row</th>
+        <th scope="col">Type of Error</th>
+        <th scope="col">Info</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in value %}
+      <tr class="tr-result">
+        <th scope="row">{{res.n}}</th>
+        <td>
+          {{res.row}}
+        </td>
+        <td>
+          {{res.type_of_error}}
+        </td>
+        <td>
+          {{res.msg}}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endfor %}
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+## project files ##
+__pycache__
+__pycache__
+# ignore other files
+docker_build/*
+Dockerfile
+#docker_build/dev_build_and_run.sh
+#docker_build/prod_build_and_run.sh
+*.txt
+*.profile
+_data_mocking.py
+wsgi.py
+api/swagger/_doc_swagger2
+*.JPEG
+
+#
+*.py[co]
+*.pyc
+*.DS_*
+# Packages
+*.egg
+*.egg-info
+build
+eggs
+parts
+bin
+var
+develop-eggs
+.installed.cfg
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+.pytest_cache
+
+
+#pycharm
+.idea/*
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea

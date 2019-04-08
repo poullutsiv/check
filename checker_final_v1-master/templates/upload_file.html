@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<form name="upload_file" action="/checked_code" method="POST"
+          enctype=multipart/form-data class="form-horizontal no-bottom-margin"
+          onsubmit="return submitFileForm();">
+        <legend>Upload python file</legend>
+        <label for="filename">
+            <div class="input-append">
+                <input id="filename" type="text">
+                <button class="btn-select-file" type="button" onclick="fileUploadClick()">
+                    Select File
+                </button>
+            </div>
+        </label>
+
+        <div class="control-group">
+            <button type="submit" class="check_code_update">Upload file</button>
+            <span id="error" class="control-label"></span>
+        </div>
+        <input type="file" name="code_file" class="hidden_upload" id="code_file"
+               onchange="fillFilename()"
+               style="visibility: hidden; height: 1px; margin: 0px;">
+        <script>
+            function submitFileForm() {
+                var MAX_SIZE = 10 * 1024 * 1024;
+                var errorField = document.getElementById('error');
+                var fileUpload = document.getElementById('code_file');
+                if (!fileUpload.files.length) {
+                    errorField.innerHTML = "Forget file";
+                    return false;
+                }
+                if (window.FileReader) {
+                    var file = fileUpload.files[0];
+                    if (file.name.split('.').pop().toLowerCase() != 'py') {
+                        errorField.innerHTML = "Only python source file (*.py)";
+                        return false;
+                    }
+                    if (file.size > MAX_SIZE) {
+                        errorField.innerHTML = "Max file size - 10Mb";
+                        return false;
+                    }
+                    else if (!file.size) {
+                        errorField.innerHTML = "Empty file";
+                        return false;
+                    }
+                }
+                return true;
+            }
+            function fileUploadClick() {
+                var fileUpload = document.getElementById('code_file');
+                fileUpload.click();
+            }
+            function fillFilename() {
+                var inputFilename = document.getElementById('filename');
+                var fileUpload = document.getElementById('code_file');
+                var filePath = fileUpload.value;
+                if (filePath.match(/fakepath/)) {
+                    filePath = filePath.replace(/C:\\fakepath\\/i, '');
+                }
+                inputFilename.value = filePath;
+            }
+        </script>
+    </form>
+{% endblock %}
